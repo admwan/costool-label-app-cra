@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { ProductProvider } from "./context/ProductContext";
 
-function App() {
+import ProjectContextPage from "./pages/ProjectContextPage";
+import ProductIdentityPage from "./pages/ProductIdentityPage";
+import PackagingDataPage from "./pages/PackagingDataPage";
+import MarketingClaimsPage from "./pages/MarketingClaimsPage";
+import SupplyChainPage from "./pages/SupplyChainPage";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ProductProvider>
+      <BrowserRouter>
+        <nav style={{ padding: 10 }}>
+          <Link to="/">Project</Link> |{" "}
+          <Link to="/identity">Identity</Link> |{" "}
+          <Link to="/packaging">Packaging</Link> |{" "}
+          <Link to="/claims">Claims</Link> |{" "}
+          <Link to="/supply">Supply</Link>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<ProjectContextPage />} />
+          <Route path="/identity" element={<ProductIdentityPage />} />
+          <Route path="/packaging" element={<PackagingDataPage />} />
+          <Route path="/claims" element={<MarketingClaimsPage />} />
+          <Route path="/supply" element={<SupplyChainPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ProductProvider>
   );
 }
-
-export default App;
