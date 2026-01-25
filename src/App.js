@@ -1,32 +1,52 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { ProductProvider } from "./context/ProductContext";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { ProductProvider } from './context/ProductContext';
+import ProjectContextPage from './pages/ProjectContextPage';
+import ProductIdentityPage from './pages/ProductIdentityPage';
+import PackagingDataPage from './pages/PackagingDataPage';
+import MarketingClaimsPage from './pages/MarketingClaimsPage';
+import SupplyChainPage from './pages/SupplyChainPage';
+import './App.css';
 
-import ProjectContextPage from "./pages/ProjectContextPage";
-import ProductIdentityPage from "./pages/ProductIdentityPage";
-import PackagingDataPage from "./pages/PackagingDataPage";
-import MarketingClaimsPage from "./pages/MarketingClaimsPage";
-import SupplyChainPage from "./pages/SupplyChainPage";
+const pages = [
+  { path: '/', element: <ProjectContextPage /> },
+  { path: '/product-identity', element: <ProductIdentityPage /> },
+  { path: '/packaging-data', element: <PackagingDataPage /> },
+  { path: '/marketing-claims', element: <MarketingClaimsPage /> },
+  { path: '/supply-chain', element: <SupplyChainPage /> },
+];
 
-export default function App() {
+function App() {
   return (
     <ProductProvider>
-      <BrowserRouter>
-        <nav style={{ padding: 10 }}>
-          <Link to="/">Project</Link> |{" "}
-          <Link to="/identity">Identity</Link> |{" "}
-          <Link to="/packaging">Packaging</Link> |{" "}
-          <Link to="/claims">Claims</Link> |{" "}
-          <Link to="/supply">Supply</Link>
-        </nav>
-
+      <Router>
         <Routes>
-          <Route path="/" element={<ProjectContextPage />} />
-          <Route path="/identity" element={<ProductIdentityPage />} />
-          <Route path="/packaging" element={<PackagingDataPage />} />
-          <Route path="/claims" element={<MarketingClaimsPage />} />
-          <Route path="/supply" element={<SupplyChainPage />} />
+          {pages.map((page, index) => (
+            <Route
+              key={page.path}
+              path={page.path}
+              element={<PageWithNavigation index={index} />}
+            />
+          ))}
         </Routes>
-      </BrowserRouter>
+      </Router>
     </ProductProvider>
   );
 }
+
+function PageWithNavigation({ index }) {
+  const navigate = useNavigate();
+  const goNext = () => navigate(pages[(index + 1) % pages.length].path);
+  const goBack = () => navigate(pages[(index - 1 + pages.length) % pages.length].path);
+
+  return (
+    <div className="page-container">
+      {pages[index].element}
+      <div className="navigation-buttons">
+        <button onClick={goBack}>Back</button>
+        <button onClick={goNext}>Next</button>
+      </div>
+    </div>
+  );
+}
+
+export default App;
