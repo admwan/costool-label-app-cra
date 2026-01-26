@@ -1,7 +1,20 @@
 import { useProduct } from "../context/ProductContext";
+import { validatePackagingData } from "../utils/validators";
+import { useState } from "react";
 
 export default function PackagingDataPage() {
   const { data, update } = useProduct();
+  const [errors, setErrors] = useState({}); // Declare errors state
+
+  const handleNext = () => {
+    const validationErrors = validatePackagingData(data);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      alert(`Please fix the following errors: ${Object.values(validationErrors).join(', ')}`);
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div>
@@ -14,6 +27,7 @@ export default function PackagingDataPage() {
           value={data.layers || ""}
           onChange={(e) => update({ layers: e.target.value })}
         />
+        {errors.layers && <p className="error">{errors.layers}</p>}
       </label>
 
       <br />
@@ -24,6 +38,7 @@ export default function PackagingDataPage() {
           value={data.nominalContent || ""}
           onChange={(e) => update({ nominalContent: e.target.value })}
         />
+        {errors.nominalContent && <p className="error">{errors.nominalContent}</p>}
       </label>
 
       <br />
@@ -39,3 +54,4 @@ export default function PackagingDataPage() {
     </div>
   );
 }
+

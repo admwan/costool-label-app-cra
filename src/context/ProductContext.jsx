@@ -23,6 +23,7 @@ export function ProductProvider({ children }) {
   );
 }
 
+// This is the hook to use the context
 export function useProduct() {
   return useContext(ProductContext);
 }

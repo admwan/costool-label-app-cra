@@ -43,6 +43,11 @@
   padding: 10px 20px;
   cursor: pointer;
 }
+.error {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
 
 @keyframes App-logo-spin {
   from {
