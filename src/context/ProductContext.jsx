@@ -16,14 +16,18 @@ export function ProductProvider({ children }) {
     setData(prev => ({ ...prev, ...newData }));
   };
 
+  const reset = () => {
+    setData({});
+    localStorage.removeItem('productData');
+  };
+
   return (
-    <ProductContext.Provider value={{ data, update }}>
+    <ProductContext.Provider value={{ data, update, reset }}>
       {children}
     </ProductContext.Provider>
   );
 }
 
-// This is the hook to use the context
 export function useProduct() {
   return useContext(ProductContext);
 }

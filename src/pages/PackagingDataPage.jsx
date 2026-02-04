@@ -42,6 +42,17 @@ export default function PackagingDataPage() {
       </label>
 
       <br />
+	  <label>
+	    Number content unit:
+	    <input
+	      type="string"
+	      value={data.unit || ""}
+	      onChange={(e) => update({ unit: e.target.value })}
+	    />
+	    {errors.unit && <p className="error">{errors.unit}</p>}
+	  </label>
+
+	  <br />
 
       <label>
         Free sample?

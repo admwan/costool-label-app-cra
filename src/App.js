@@ -1,7 +1,14 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import ErrorModal from './components/ErrorModal';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ProductProvider, useProduct } from './context/ProductContext';
+import ErrorModal from './components/ErrorModal';
+import WelcomePage from './pages/WelcomePage';
+import ProjectContextPage from './pages/ProjectContextPage';
+import ProductIdentityPage from './pages/ProductIdentityPage';
+import PackagingDataPage from './pages/PackagingDataPage';
+import MarketingClaimsPage from './pages/MarketingClaimsPage';
+import SupplyChainPage from './pages/SupplyChainPage';
+import CompletionPage from './pages/CompletionPage';
 import {
   validateProjectContext,
   validateProductIdentity,
@@ -9,16 +16,11 @@ import {
   validateMarketingClaims,
   validateSupplyChain
 } from './utils/validators';
-import ProjectContextPage from './pages/ProjectContextPage';
-import ProductIdentityPage from './pages/ProductIdentityPage';
-import PackagingDataPage from './pages/PackagingDataPage';
-import MarketingClaimsPage from './pages/MarketingClaimsPage';
-import SupplyChainPage from './pages/SupplyChainPage';
 import './App.css';
 
-// Define pages with their validators
-const pages = [
-  { path: '/', element: <ProjectContextPage />, validator: validateProjectContext },
+// Define pages excluding Welcome and Completion
+const dataEntryPages = [
+  { path: '/project-context', element: <ProjectContextPage />, validator: validateProjectContext },
   { path: '/product-identity', element: <ProductIdentityPage />, validator: validateProductIdentity },
   { path: '/packaging-data', element: <PackagingDataPage />, validator: validatePackagingData },
   { path: '/marketing-claims', element: <MarketingClaimsPage />, validator: validateMarketingClaims },
@@ -30,8 +32,8 @@ function PageWithNavigation({ index }) {
   const { data } = useProduct();
   const [showModal, setShowModal] = useState(false);
   const [modalErrors, setModalErrors] = useState({});
-  const PageComponent = pages[index].element.type;
-  const validator = pages[index].validator;
+  const PageComponent = dataEntryPages[index].element.type;
+  const validator = dataEntryPages[index].validator;
 
   const goNext = () => {
     const validationErrors = validator(data);
@@ -39,18 +41,30 @@ function PageWithNavigation({ index }) {
       setModalErrors(validationErrors);
       setShowModal(true);
     } else {
-      navigate(pages[(index + 1) % pages.length].path);
+      const nextIndex = index + 1;
+      if (nextIndex < dataEntryPages.length) {
+        navigate(dataEntryPages[nextIndex].path);
+      } else {
+        navigate('/completion');
+      }
     }
   };
 
-  const goBack = () => navigate(pages[(index - 1 + pages.length) % pages.length].path);
+  const goBack = () => {
+    const prevIndex = index - 1;
+    if (prevIndex >= 0) {
+      navigate(dataEntryPages[prevIndex].path);
+    } else {
+      navigate('/welcome');
+    }
+  };
 
   return (
     <div className="page-container">
       <PageComponent />
-      <div className="navigation-buttons">
-        <button onClick={goBack}>Back</button>
-        <button onClick={goNext}>Next</button>
+      <div className="navigation-buttons" style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+        <button onClick={goBack} style={{ padding: '10px 20px' }}>Back</button>
+        <button onClick={goNext} style={{ padding: '10px 20px' }}>Next</button>
       </div>
       {showModal && (
         <ErrorModal
@@ -63,19 +77,26 @@ function PageWithNavigation({ index }) {
 }
 
 
-
 function App() {
+  // Clear localStorage when the app loads
+  useEffect(() => {
+    localStorage.removeItem('productData');
+  }, []);
+
   return (
     <ProductProvider>
       <Router>
         <Routes>
-          {pages.map((page, index) => (
+          <Route path="/welcome" element={<WelcomePage />} />
+          {dataEntryPages.map((page, index) => (
             <Route
               key={page.path}
               path={page.path}
               element={<PageWithNavigation index={index} />}
             />
           ))}
+          <Route path="/completion" element={<CompletionPage />} />
+          <Route path="*" element={<Navigate to="/welcome" replace />} />
         </Routes>
       </Router>
     </ProductProvider>

@@ -7,10 +7,10 @@ export const validateProjectContext = (data) => {
 
 export const validateProductIdentity = (data) => {
   const errors = {};
-  if (!data.brand) errors.brand = "Brand name is required";
+  if (!data.brandName) errors.brandName = "Brand name is required";
   if (!data.productName) errors.productName = "Product name is required";
-  if (!data.function) errors.function = "Product function is required";
-  if (!data.category) errors.category = "Product category is required";
+  if (!data.productFunction) errors.productFunction = "Product function is required";
+  if (!data.productCategory) errors.productCategory = "Product category is required";
   return errors;
 };
 
